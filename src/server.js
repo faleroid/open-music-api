@@ -5,11 +5,13 @@ const albums = require('./api/albums');
 const songs = require('./api/songs');
 const AlbumsService = require('./services/postgres/AlbumService');
 const AlbumsValidator = require('./validator/albums');
+
 const SongsService = require('./services/postgres/SongsService');
 const SongsValidator = require('./validator/songs');
 const ClientError = require('./exceptions/ClientError');
+
 const playlists = require('./api/playlists');
-const PlaylistsService = require('./services/postgres/PlaylistsService');
+const PlaylistService = require('./services/postgres/PlayListsService');
 const PlaylistsValidator = require('./validator/playlists');
 
 const AuthenticationsService = require('./services/postgres/AuthenticationsService');
@@ -21,15 +23,25 @@ const UsersService = require('./services/postgres/UsersService');
 const users = require('./api/users');
 const UsersValidator = require('./validator/users');
 
+const CollaborationsService = require('./services/postgres/CollaborationsService');
+const CollaborationsValidator = require('./validator/collaborations');
+
+const PlaylistActivitiesService = require('./services/postgres/PlaylistActivitiesService');
+
+const playlistSongs = require('./api/playlistsongs');
+const PlaylistSongsValidator = require('./validator/playlistsongs');
+const PlaylistSongsService = require('./services/postgres/PlaylistSongsService');
 
 
 const init = async () => {
-
     const albumsService = new AlbumsService();
     const songsService = new SongsService();
-    const playlistsService = new PlaylistsService();
+    const usersService = new UsersService();
+    const collaborationsService = new CollaborationsService(usersService);
+    const playlistsService = new PlaylistService(collaborationsService);
     const authenticationsService = new AuthenticationsService();
-
+    const playlistActivitiesService = new PlaylistActivitiesService();
+    const playlistSongsService = new PlaylistSongsService();
 
 
     const server = Hapi.server({
@@ -42,10 +54,27 @@ const init = async () => {
     },
     });
 
+    await server.register({
+        plugin: Jwt,
+    })
+
+    server.auth.strategy('openmusic_jwt', 'jwt', {
+        keys: process.env.ACCESS_TOKEN_KEY,
+        verify: {
+            aud: false,
+            iss: false,
+            sub: false,
+            maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+        },
+        validate: (artifacts) => ({
+            isValid: true,
+            credentials: {
+                id: artifacts.decoded.payload.id,
+            },
+        }),
+    });
+
     await server.register([
-    {
-        Jwt,
-    },
     {
     plugin: albums,
     options: {
@@ -70,8 +99,8 @@ const init = async () => {
     {
     plugin: authentications,
     options: {
-        service: AuthenticationsService,
-        usersService: UsersService,
+        service: authenticationsService,
+        usersService: usersService,
         tokenManager: TokenManager,
         validator: AuthenticationsValidator,
     },
@@ -79,27 +108,36 @@ const init = async () => {
     {
         plugin: users,
         options: {
-            service: UsersService,
+            service: usersService,
             validator: UsersValidator,
         },
     },
-    ]);
-
-    server.auth.strategy('openmusic_jwt', 'jwt', {
-        keys: process.env.ACCESS_TOKEN_KEY,
-        verify: {
-            aud: false,
-            iss: false,
-            sub: false,
-            maxAgeSec: process.env.ACCESS_TOKEN_AGE,
+    {
+        plugin: require('./api/collaborations'),
+        options: {
+            collaborationsService,
+            playlistsService, 
+            validator: CollaborationsValidator,
         },
-        validate: (artifacts) => ({
-            isValid: true,
-            credentials: {
-                id: artifacts.decoded.payload.id,
-            },
-        }),
-    });
+    },
+    {
+        plugin: require('./api/playlistactivities'),
+        options: {
+            service: playlistActivitiesService,
+            playlistsService,
+        },
+    },
+    {
+    plugin: playlistSongs,
+    options: {
+        playlistSongsService,
+        playlistsService,
+        songsService,
+        playlistActivitiesService,
+        validator: PlaylistSongsValidator,
+    },
+    },
+    ]);
 
     server.ext('onPreResponse', (request, h) => {
     const { response } = request;
