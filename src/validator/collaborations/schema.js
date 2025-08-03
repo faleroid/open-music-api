@@ -1,13 +1,8 @@
-const InvariantError = require('../../exceptions/InvariantError');
-const { CollaborationPayloadSchema } = require('./schema');
+const Joi = require('joi');
 
-const CollaborationsValidator = {
-  validateCollaborationPayload: (payload) => {
-    const validationResult = CollaborationPayloadSchema.validate(payload);
-    if (validationResult.error) {
-      throw new InvariantError(validationResult.error.message);
-    }
-  },
-};
+const CollaborationPayloadSchema = Joi.object({
+  playlistId: Joi.string().required(),
+  userId: Joi.string().required(),
+});
 
-module.exports = CollaborationsValidator;
+module.exports = { CollaborationPayloadSchema };

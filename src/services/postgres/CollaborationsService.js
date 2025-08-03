@@ -2,7 +2,7 @@ const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
 // const InvariantError = require('../../exceptions/InvariantError');
 const AuthorizationError = require('../../exceptions/AuthorizationError')
-const NotFoundError = require('../../exceptions/NotFoundError')
+// const NotFoundError = require('../../exceptions/NotFoundError')
 
 class CollaborationsService {
   constructor(usersService) {
@@ -21,10 +21,6 @@ class CollaborationsService {
 
   const result = await this._pool.query(query);
 
-  if (!result.rows.length) {
-    throw new NotFoundError('User tidak ditemukan');
-  }
-
   return result.rows[0].id;
 }
 
@@ -37,6 +33,20 @@ class CollaborationsService {
     const result = await this._pool.query(query);
     if (!result.rowCount) {
       throw new AuthorizationError('Kolaborasi gagal diverifikasi');
+    }
+  }
+
+  async deleteCollaboration(playlistId, userId) {
+    const query = {
+      text: 'DELETE FROM collaborations WHERE playlist_id = $1 AND user_id = $2 RETURNING id',
+      values: [playlistId, userId],
+    };
+
+    const result = await this._pool.query(query);
+
+    if (!result.rowCount) {
+      const InvariantError = require('../../exceptions/InvariantError');
+      throw new InvariantError('Kolaborasi gagal dihapus. Kolaborasi tidak ditemukan');
     }
   }
 }

@@ -23,9 +23,11 @@ const UsersService = require('./services/postgres/UsersService');
 const users = require('./api/users');
 const UsersValidator = require('./validator/users');
 
+const collaborations = require('./api/collaborations')
 const CollaborationsService = require('./services/postgres/CollaborationsService');
 const CollaborationsValidator = require('./validator/collaborations');
 
+const playlistactivities = require('./api/playlistactivities');
 const PlaylistActivitiesService = require('./services/postgres/PlaylistActivitiesService');
 
 const playlistSongs = require('./api/playlistsongs');
@@ -113,7 +115,7 @@ const init = async () => {
         },
     },
     {
-        plugin: require('./api/collaborations'),
+        plugin: collaborations,
         options: {
             collaborationsService,
             playlistsService, 
@@ -121,7 +123,7 @@ const init = async () => {
         },
     },
     {
-        plugin: require('./api/playlistactivities'),
+        plugin: playlistactivities,
         options: {
             service: playlistActivitiesService,
             playlistsService,
@@ -143,6 +145,7 @@ const init = async () => {
     const { response } = request;
 
     if (response instanceof Error) {
+
         if (response instanceof ClientError) {
         const newResponse = h.response({
             status: 'fail',
