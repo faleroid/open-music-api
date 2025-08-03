@@ -1,8 +1,8 @@
 const { nanoid } = require('nanoid');
+const { Pool } = require('pg');
 const InvariantError = require('../../exceptions/InvariantError');
 const NotFoundError = require('../../exceptions/NotFoundError');
 const AuthorizationError = require('../../exceptions/AuthorizationError');
-const { Pool } = require('pg');
 
 class PlaylistsService {
   constructor(collaborationService) {
@@ -13,15 +13,15 @@ class PlaylistsService {
   async addPlaylist(name, owner) {
     const id = `playlist-${nanoid(16)}`;
 
-  const checkQuery = {
-    text: 'SELECT id FROM playlists WHERE name = $1 AND owner = $2',
-    values: [name, owner],
-  };
+    const checkQuery = {
+      text: 'SELECT id FROM playlists WHERE name = $1 AND owner = $2',
+      values: [name, owner],
+    };
 
-  const checkResult = await this._pool.query(checkQuery);
-  if (checkResult.rowCount > 0) {
-    throw new InvariantError('Playlist dengan nama tersebut sudah ada.');
-  }
+    const checkResult = await this._pool.query(checkQuery);
+    if (checkResult.rowCount > 0) {
+      throw new InvariantError('Playlist dengan nama tersebut sudah ada.');
+    }
 
     const query = {
       text: 'INSERT INTO playlists (id, name, owner) VALUES ($1, $2, $3) RETURNING id',
@@ -104,16 +104,16 @@ class PlaylistsService {
   }
 
   async deletePlaylistById(playlistId) {
-  const query = {
-    text: 'DELETE FROM playlists WHERE id = $1 RETURNING id',
-    values: [playlistId],
-  };
+    const query = {
+      text: 'DELETE FROM playlists WHERE id = $1 RETURNING id',
+      values: [playlistId],
+    };
 
-  const result = await this._pool.query(query);
+    const result = await this._pool.query(query);
 
-  if (!result.rowCount) {
-    throw new NotFoundError('Playlist gagal dihapus. Id tidak ditemukan');
-  }
+    if (!result.rowCount) {
+      throw new NotFoundError('Playlist gagal dihapus. Id tidak ditemukan');
+    }
   }
 }
 

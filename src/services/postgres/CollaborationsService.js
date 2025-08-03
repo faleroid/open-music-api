@@ -1,8 +1,7 @@
 const { Pool } = require('pg');
 const { nanoid } = require('nanoid');
-// const InvariantError = require('../../exceptions/InvariantError');
-const AuthorizationError = require('../../exceptions/AuthorizationError')
-// const NotFoundError = require('../../exceptions/NotFoundError')
+const AuthorizationError = require('../../exceptions/AuthorizationError');
+const InvariantError = require('../../exceptions/InvariantError');
 
 class CollaborationsService {
   constructor(usersService) {
@@ -11,18 +10,18 @@ class CollaborationsService {
   }
 
   async addCollaboration(playlistId, userId) {
-  await this._usersService.getUserById(userId);
+    await this._usersService.getUserById(userId);
 
-  const id = `collab-${nanoid(16)}`;
-  const query = {
-    text: 'INSERT INTO collaborations VALUES($1, $2, $3) RETURNING id',
-    values: [id, playlistId, userId],
-  };
+    const id = `collab-${nanoid(16)}`;
+    const query = {
+      text: 'INSERT INTO collaborations VALUES($1, $2, $3) RETURNING id',
+      values: [id, playlistId, userId],
+    };
 
-  const result = await this._pool.query(query);
+    const result = await this._pool.query(query);
 
-  return result.rows[0].id;
-}
+    return result.rows[0].id;
+  }
 
   async verifyCollaborator(playlistId, userId) {
     const query = {
@@ -45,7 +44,6 @@ class CollaborationsService {
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      const InvariantError = require('../../exceptions/InvariantError');
       throw new InvariantError('Kolaborasi gagal dihapus. Kolaborasi tidak ditemukan');
     }
   }

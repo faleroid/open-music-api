@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node src/server.js",
     "dev": "nodemon ./src/server.js",
     "migrate": "node-pg-migrate",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ./src",
+    "lint:fix": "eslint ./src --fix"
   },
   "keywords": [],
   "author": "",
@@ -25,7 +26,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.31.0",
-    "eslint": "^9.31.0",
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.32.0",
     "globals": "^16.3.0",
     "nodemon": "^3.1.10"
   }

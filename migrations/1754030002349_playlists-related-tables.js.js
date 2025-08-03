@@ -1,9 +1,6 @@
-/* eslint-disable camelcase */
-
 exports.shorthands = undefined;
 
 exports.up = (pgm) => {
-  // 1. playlists
   pgm.createTable('playlists', {
     id: { type: 'VARCHAR(50)', primaryKey: true },
     name: { type: 'TEXT', notNull: true },
@@ -15,7 +12,6 @@ exports.up = (pgm) => {
     },
   });
 
-  // 2. playlist_songs
   pgm.createTable('playlist_songs', {
     id: { type: 'VARCHAR(50)', primaryKey: true },
     playlist_id: {
@@ -32,7 +28,6 @@ exports.up = (pgm) => {
     },
   });
 
-  // 3. collaborations
   pgm.createTable('collaborations', {
     id: { type: 'VARCHAR(50)', primaryKey: true },
     playlist_id: {
@@ -49,7 +44,6 @@ exports.up = (pgm) => {
     },
   });
 
-  // 4. playlist_song_activities
   pgm.createTable('playlist_song_activities', {
     id: { type: 'VARCHAR(50)', primaryKey: true },
     playlist_id: {

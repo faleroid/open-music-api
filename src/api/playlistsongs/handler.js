@@ -1,5 +1,11 @@
 class PlaylistSongsHandler {
-  constructor(playlistsService, songsService, playlistActivitiesService, playlistSongsService, validator) {
+  constructor(
+    playlistsService,
+    songsService,
+    playlistActivitiesService,
+    playlistSongsService,
+    validator,
+  ) {
     this._playlistsService = playlistsService;
     this._songsService = songsService;
     this._playlistActivitiesService = playlistActivitiesService;
@@ -12,28 +18,28 @@ class PlaylistSongsHandler {
   }
 
   async postPlaylistSongHandler(request, h) {
-  try {
-    this._validator.validatePlaylistSongPayload(request.payload);
-    const { id: credentialId } = request.auth.credentials;
-    const { playlistId } = request.params;
-    const { songId } = request.payload;
+    try {
+      this._validator.validatePlaylistSongPayload(request.payload);
+      const { id: credentialId } = request.auth.credentials;
+      const { playlistId } = request.params;
+      const { songId } = request.payload;
 
-    await this._playlistsService.verifyPlaylistAccess(playlistId, credentialId);
-    await this._songsService.getSongById(songId);
-    await this._playlistSongsService.addSongToPlaylist(playlistId, songId);
-    await this._playlistActivitiesService.addActivity(playlistId, songId, credentialId, 'add');
+      await this._playlistsService.verifyPlaylistAccess(playlistId, credentialId);
+      await this._songsService.getSongById(songId);
+      await this._playlistSongsService.addSongToPlaylist(playlistId, songId);
+      await this._playlistActivitiesService.addActivity(playlistId, songId, credentialId, 'add');
 
-    const response = h.response({
-      status: 'success',
-      message: 'Lagu berhasil ditambahkan ke playlist',
-    });
-    response.code(201);
-    return response;
-  } catch (error) {
-    console.error(error);
-    throw error;
+      const response = h.response({
+        status: 'success',
+        message: 'Lagu berhasil ditambahkan ke playlist',
+      });
+      response.code(201);
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
   }
-}
 
   async getPlaylistSongsHandler(request) {
     const { id: credentialId } = request.auth.credentials;

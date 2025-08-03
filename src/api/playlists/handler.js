@@ -34,18 +34,17 @@ class PlaylistsHandler {
   }
 
   async deletePlaylistHandler(request) {
-  const { id: playlistId } = request.params;
-  const { id: userId } = request.auth.credentials;
+    const { id: playlistId } = request.params;
+    const { id: userId } = request.auth.credentials;
 
-  await this._service.verifyPlaylistOwner(playlistId, userId);
-  await this._service.deletePlaylistById(playlistId);
+    await this._service.verifyPlaylistOwner(playlistId, userId);
+    await this._service.deletePlaylistById(playlistId);
 
-  return {
-    status: 'success',
-    message: 'Playlist berhasil dihapus',
-  };
+    return {
+      status: 'success',
+      message: 'Playlist berhasil dihapus',
+    };
   }
-
 }
 
 module.exports = PlaylistsHandler;
