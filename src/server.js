@@ -35,6 +35,10 @@ const playlistSongs = require('./api/playlistsongs');
 const PlaylistSongsValidator = require('./validator/playlistsongs');
 const PlaylistSongsService = require('./services/postgres/PlaylistSongsService');
 
+const _exports = require('./api/exports');
+const ProducerService = require('./services/rabbitmq/ProducerService');
+const ExportsValidator = require('./validator/exports');
+
 const init = async () => {
   const albumsService = new AlbumsService();
   const songsService = new SongsService();
@@ -67,12 +71,17 @@ const init = async () => {
       sub: false,
       maxAgeSec: process.env.ACCESS_TOKEN_AGE,
     },
-    validate: (artifacts) => ({
-      isValid: true,
+    validate: (artifacts) => {
+
+      console.log('--- STRATEGI JWT BERJALAN ---');
+      console.log('Payload dari token:', artifacts.decoded.payload);
+
+      return { isValid: true,
       credentials: {
         id: artifacts.decoded.payload.id,
       },
-    }),
+    };
+  },
   });
 
   await server.register([
@@ -136,6 +145,14 @@ const init = async () => {
         songsService,
         playlistActivitiesService,
         validator: PlaylistSongsValidator,
+      },
+    },
+    {
+      plugin: _exports,
+      options: {
+        service: ProducerService, 
+        playlistsService: playlistsService,
+        validator: ExportsValidator,
       },
     },
   ]);
