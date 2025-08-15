@@ -42,29 +42,13 @@ class SongsService {
     return result.rows[0];
   }
 
-  async getSongs({ title, performer }) {
+  async getSongs(title = '', performer = '') {
     const query = {
-      text: 'SELECT id, title, performer FROM songs',
-      values: [],
+      text: 'SELECT id, title, performer FROM songs WHERE title ILIKE $1 and performer ILIKE $2',
+      values: [`%${title}%`, `%${performer}%`],
     };
-
-    const conditions = [];
-
-    if (title) {
-      conditions.push(`LOWER(title) LIKE LOWER($${conditions.length + 1})`);
-      query.values.push(`%${title}%`);
-    }
-    if (performer) {
-      conditions.push(`LOWER(performer) LIKE LOWER($${conditions.length + 1})`);
-      query.values.push(`%${performer}%`);
-    }
-
-    if (conditions.length > 0) {
-      query.text += ` WHERE ${conditions.join(' AND ')}`;
-    }
-
-    const result = await this._pool.query(query);
-    return result.rows;
+    const { rows } = await this._pool.query(query);
+    return rows;
   }
 
   async editSongById(id, {
