@@ -10,12 +10,11 @@ class ExportsHandler {
   async postExportPlaylistsHandler(request, h) {
     this._validator.validateExportPlaylistsPayload(request.payload);
 
+    console.log('testing handler!');
+
     const { playlistId } = request.params;
     const { id: userId } = request.auth.credentials;
     const { targetEmail } = request.payload;
-    
-    console.log('--- MASUK KE EXPORTS HANDLER ---');
-    console.log('Isi this._playlistsService:', this._playlistsService);
 
     await this._playlistsService.verifyPlaylistOwner(playlistId, userId);
 
