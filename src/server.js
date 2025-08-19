@@ -39,9 +39,6 @@ const _exports = require('./api/exports');
 const ProducerService = require('./services/rabbitmq/ProducerService');
 const ExportsValidator = require('./validator/exports');
 
-console.log('--- HASIL REQUIRE PLUGIN EXPORTS ---');
-console.log(_exports);
-
 const init = async () => {
   const albumsService = new AlbumsService();
   const songsService = new SongsService();
