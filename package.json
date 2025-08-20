@@ -25,7 +25,8 @@
     "nanoid": "^5.1.5",
     "node-pg-migrate": "^8.0.3",
     "nodemailer": "^7.0.5",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "redis": "^5.8.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.31.0",

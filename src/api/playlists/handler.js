@@ -16,10 +16,12 @@ class PlaylistsHandler {
 
     const playlistId = await this._service.addPlaylist(name, owner);
 
-    return h.response({
-      status: 'success',
-      data: { playlistId },
-    }).code(201);
+    return h
+      .response({
+        status: "success",
+        data: { playlistId },
+      })
+      .code(201);
   }
 
   async getPlaylistsHandler(request) {
@@ -28,7 +30,7 @@ class PlaylistsHandler {
     const playlists = await this._service.getPlaylists(owner);
 
     return {
-      status: 'success',
+      status: "success",
       data: { playlists },
     };
   }
@@ -41,8 +43,8 @@ class PlaylistsHandler {
     await this._service.deletePlaylistById(playlistId);
 
     return {
-      status: 'success',
-      message: 'Playlist berhasil dihapus',
+      status: "success",
+      message: "Playlist berhasil dihapus",
     };
   }
 }
