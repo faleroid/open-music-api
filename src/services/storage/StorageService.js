@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require("path");
 const fs = require("fs");
 
 class StorageService {
@@ -11,8 +11,6 @@ class StorageService {
   }
 
   writeFile(file, meta) {
-    console.log("ini service");
-
     const filename = +new Date() + meta.filename;
     const filePath = path.resolve(this._folder, filename);
     const fileStream = fs.createWriteStream(filePath);

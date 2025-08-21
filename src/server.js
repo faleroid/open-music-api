@@ -1,6 +1,6 @@
 require("dotenv").config();
-const path = require('path');
-const Inert = require('@hapi/inert');
+const path = require("path");
+const Inert = require("@hapi/inert");
 
 const Hapi = require("@hapi/hapi");
 const Jwt = require("@hapi/jwt");
@@ -55,7 +55,9 @@ const init = async () => {
   const authenticationsService = new AuthenticationsService();
   const playlistActivitiesService = new PlaylistActivitiesService();
   const playlistSongsService = new PlaylistSongsService();
-  const storageService = new StorageService(path.resolve(__dirname, 'api/uploads/file/images'));
+  const storageService = new StorageService(
+    path.resolve(__dirname, "api/uploads/file/images"),
+  );
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -69,11 +71,11 @@ const init = async () => {
 
   await server.register([
     {
-    plugin: Jwt,
+      plugin: Jwt,
     },
     {
       plugin: Inert,
-    }
+    },
   ]);
 
   server.auth.strategy("openmusic_jwt", "jwt", {
@@ -168,10 +170,10 @@ const init = async () => {
     {
       plugin: uploads,
       options: {
-        storageService: storageService, 
+        storageService: storageService,
         albumsService: albumsService,
         validator: UploadsValidator,
-    },
+      },
     },
   ]);
 
