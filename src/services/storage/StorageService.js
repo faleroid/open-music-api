@@ -1,3 +1,4 @@
+const path = require('path');
 const fs = require("fs");
 
 class StorageService {
@@ -11,9 +12,8 @@ class StorageService {
 
   writeFile(file, meta) {
     const filename = +new Date() + meta.filename;
-    const path = `${this._folder}/${filename}`;
-
-    const fileStream = fs.createWriteStream(path);
+    const filePath = path.resolve(this._folder, filename);
+    const fileStream = fs.createWriteStream(filePath);
 
     return new Promise((resolve, reject) => {
       fileStream.on("error", (error) => reject(error));

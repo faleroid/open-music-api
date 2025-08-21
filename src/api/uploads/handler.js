@@ -10,9 +10,9 @@ class UploadsHandler {
   async postUploadCoverAlbum(request, h) {
     const { cover } = request.payload;
     const { id: albumId } = request.params;
-    const { id: userId } = request.auth.credentials;
 
-    await this._albumsService.verifyAlbumOwner(albumId, userId);
+    console.log('testing handler');
+    
     this._validator.validateCoverAlbum(cover.hapi.headers);
 
     const filename = await this._service.writeFile(cover, cover.hapi);

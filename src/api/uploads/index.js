@@ -10,6 +10,10 @@ module.exports = {
       albumsService,
       validator,
     );
+
+    console.log('ini testing index.js');
+    console.log(routes(uploadsHandler));
+    
     server.route(routes(uploadsHandler));
   },
 };
