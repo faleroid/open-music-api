@@ -1,9 +1,11 @@
+const autoBind = require('auto-bind');
+
 class PlaylistActivitiesHandler {
   constructor(service, playlistsService) {
     this._service = service;
     this._playlistsService = playlistsService;
 
-    this.getActivitiesHandler = this.getActivitiesHandler.bind(this);
+    autoBind(this);
   }
 
   async getActivitiesHandler(request) {
