@@ -1,3 +1,4 @@
+const NotFoundError = require("../../exceptions/NotFoundError");
 const redis = require("redis");
 
 class CacheService {
@@ -24,7 +25,9 @@ class CacheService {
   async get(key) {
     const result = await this._client.get(key);
 
-    if (key === null) throw new error("Cache tidak ditemukan");
+    if (result === null) {
+      throw new NotFoundError('Cache tidak ditemukan');
+    }
 
     return result;
   }

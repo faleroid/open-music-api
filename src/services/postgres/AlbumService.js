@@ -25,6 +25,49 @@ class AlbumsService {
     return result.rows[0].id;
   }
 
+  async addAlbumLike(albumId, userId) {
+    await this.getAlbumById(albumId);
+
+    const id = `like-${nanoid(16)}`;
+    const query = {
+    text: 'INSERT INTO user_album_likes (id, user_id, album_id) VALUES ($1, $2, $3) RETURNING id',
+    values: [id, userId, albumId],
+    };
+
+    try {
+      const result = await this._pool.query(query);
+      if (!result.rows.length) {
+        throw new InvariantError('Gagal menyukai album');
+      }
+    } catch (error) {
+
+      if (error.code === '23505') {
+        throw new InvariantError('Anda sudah menyukai album ini', 400);
+      }
+      throw error;
+    }
+  }
+
+   async deleteAlbumLike(albumId, userId) {
+    const query = {
+      text: 'DELETE FROM user_album_likes WHERE album_id = $1 AND user_id = $2 RETURNING id',
+      values: [albumId, userId],
+    };
+    const result = await this._pool.query(query);
+    if (!result.rowCount) {
+      throw new InvariantError('Gagal batal menyukai album');
+    }
+  }
+
+  async getAlbumLikesCount(albumId) {
+    const query = {
+      text: 'SELECT COUNT(*) FROM user_album_likes WHERE album_id = $1',
+      values: [albumId],
+    };
+    const result = await this._pool.query(query);
+    return parseInt(result.rows[0].count, 10);
+  }
+
   async getAlbumById(id) {
     const queryAlbum = {
       text: "SELECT id, name, year, cover FROM albums WHERE id = $1",
