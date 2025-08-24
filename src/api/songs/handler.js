@@ -1,17 +1,20 @@
-const autoBind = require("auto-bind");
+const autoBind = require('auto-bind');
 
 class SongsHandler {
-  constructor(service, validator) {
+  constructor(service, validator, cacheService) {
     this._service = service;
     this._validator = validator;
+    this._cacheService = cacheService;
 
     autoBind(this);
   }
 
   async postSongHandler(request, h) {
     this._validator.validateSongPayload(request.payload);
-    const { title, year, genre, performer, duration, albumId } =
-      request.payload;
+    const {
+      title, year, genre, performer, duration, albumId,
+    } = request.payload;
+
     const songId = await this._service.addSong({
       title,
       year,
@@ -21,9 +24,11 @@ class SongsHandler {
       albumId,
     });
 
+    await this._cacheService.delete(`album:${albumId}`);
+
     return h
       .response({
-        status: "success",
+        status: 'success',
         data: {
           songId,
         },
@@ -36,7 +41,7 @@ class SongsHandler {
     const songs = await this._service.getSongs({ title, performer });
 
     return {
-      status: "success",
+      status: 'success',
       data: {
         songs,
       },
@@ -47,7 +52,7 @@ class SongsHandler {
     const { id } = request.params;
     const song = await this._service.getSongById(id);
     return {
-      status: "success",
+      status: 'success',
       data: {
         song,
       },
@@ -57,8 +62,9 @@ class SongsHandler {
   async putSongByIdHandler(request) {
     this._validator.validateSongPayload(request.payload);
     const { id } = request.params;
-    const { title, year, genre, performer, duration, albumId } =
-      request.payload;
+    const {
+      title, year, genre, performer, duration, albumId,
+    } = request.payload;
 
     await this._service.editSongById(id, {
       title,
@@ -69,19 +75,23 @@ class SongsHandler {
       albumId,
     });
 
+    this._cacheService.delete(`album:${albumId}`);
+
     return {
-      status: "success",
-      message: "Lagu berhasil diperbarui",
+      status: 'success',
+      message: 'Lagu berhasil diperbarui',
     };
   }
 
   async deleteSongByIdHandler(request) {
     const { id } = request.params;
-    await this._service.deleteSongById(id);
+    const albumId = await this._service.deleteSongById(id);
+
+    this._cacheService.delete(`album:${albumId}`);
 
     return {
-      status: "success",
-      message: "Lagu berhasil dihapus",
+      status: 'success',
+      message: 'Lagu berhasil dihapus',
     };
   }
 }

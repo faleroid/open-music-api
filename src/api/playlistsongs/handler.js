@@ -34,12 +34,12 @@ class PlaylistSongsHandler {
         playlistId,
         songId,
         credentialId,
-        "add",
+        'add',
       );
 
       const response = h.response({
-        status: "success",
-        message: "Lagu berhasil ditambahkan ke playlist",
+        status: 'success',
+        message: 'Lagu berhasil ditambahkan ke playlist',
       });
       response.code(201);
       return response;
@@ -54,11 +54,10 @@ class PlaylistSongsHandler {
     const { playlistId } = request.params;
 
     await this._playlistsService.verifyPlaylistAccess(playlistId, credentialId);
-    const playlist =
-      await this._playlistSongsService.getSongsFromPlaylist(playlistId);
+    const playlist = await this._playlistSongsService.getSongsFromPlaylist(playlistId);
 
     return {
-      status: "success",
+      status: 'success',
       data: {
         playlist,
       },
@@ -77,12 +76,12 @@ class PlaylistSongsHandler {
       playlistId,
       songId,
       credentialId,
-      "delete",
+      'delete',
     );
 
     return {
-      status: "success",
-      message: "Lagu berhasil dihapus dari playlist",
+      status: 'success',
+      message: 'Lagu berhasil dihapus dari playlist',
     };
   }
 }

@@ -22,8 +22,8 @@ class CollaborationsHandler {
     );
 
     const response = h.response({
-      status: "success",
-      message: "Kolaborasi berhasil ditambahkan",
+      status: 'success',
+      message: 'Kolaborasi berhasil ditambahkan',
       data: {
         collaborationId,
       },
@@ -41,8 +41,8 @@ class CollaborationsHandler {
     await this._collaborationsService.deleteCollaboration(playlistId, userId);
 
     return {
-      status: "success",
-      message: "Kolaborasi berhasil dihapus",
+      status: 'success',
+      message: 'Kolaborasi berhasil dihapus',
     };
   }
 }

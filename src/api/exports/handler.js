@@ -24,13 +24,13 @@ class ExportsHandler {
     };
 
     await this._service.sendMessage(
-      "export:playlists",
+      'export:playlists',
       JSON.stringify(message),
     );
 
     const response = h.response({
-      status: "success",
-      message: "Permintaan Anda sedang kami proses",
+      status: 'success',
+      message: 'Permintaan Anda sedang kami proses',
     });
     response.code(201);
     return response;

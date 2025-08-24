@@ -1,5 +1,5 @@
-const NotFoundError = require("../../exceptions/NotFoundError");
-const redis = require("redis");
+const redis = require('redis');
+const NotFoundError = require('../../exceptions/NotFoundError');
 
 class CacheService {
   constructor() {
@@ -9,7 +9,7 @@ class CacheService {
       },
     });
 
-    this._client.on("error", (error) => {
+    this._client.on('error', (error) => {
       console.error(error);
     });
 

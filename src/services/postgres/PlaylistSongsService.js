@@ -1,7 +1,7 @@
-const { nanoid } = require("nanoid");
-const { Pool } = require("pg");
-const InvariantError = require("../../exceptions/InvariantError");
-const NotFoundError = require("../../exceptions/NotFoundError");
+const { nanoid } = require('nanoid');
+const { Pool } = require('pg');
+const InvariantError = require('../../exceptions/InvariantError');
+const NotFoundError = require('../../exceptions/NotFoundError');
 
 class PlaylistSongsService {
   constructor() {
@@ -10,25 +10,25 @@ class PlaylistSongsService {
 
   async addSongToPlaylist(playlistId, songId) {
     const checkQuery = {
-      text: "SELECT * FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2",
+      text: 'SELECT * FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2',
       values: [playlistId, songId],
     };
 
     const checkResult = await this._pool.query(checkQuery);
     if (checkResult.rowCount > 0) {
-      throw new InvariantError("Lagu sudah ada di dalam playlist");
+      throw new InvariantError('Lagu sudah ada di dalam playlist');
     }
 
     const id = `playlistsong-${nanoid(16)}`;
     const query = {
-      text: "INSERT INTO playlist_songs VALUES($1, $2, $3) RETURNING id",
+      text: 'INSERT INTO playlist_songs VALUES($1, $2, $3) RETURNING id',
       values: [id, playlistId, songId],
     };
 
     const result = await this._pool.query(query);
 
     if (!result.rows[0].id) {
-      throw new InvariantError("Lagu gagal ditambahkan ke playlist");
+      throw new InvariantError('Lagu gagal ditambahkan ke playlist');
     }
 
     return result.rows[0].id;
@@ -47,7 +47,7 @@ class PlaylistSongsService {
     const playlistResult = await this._pool.query(playlistQuery);
 
     if (!playlistResult.rowCount) {
-      throw new NotFoundError("Playlist tidak ditemukan");
+      throw new NotFoundError('Playlist tidak ditemukan');
     }
 
     const playlist = playlistResult.rows[0];
@@ -73,14 +73,14 @@ class PlaylistSongsService {
 
   async deleteSongFromPlaylist(playlistId, songId) {
     const query = {
-      text: "DELETE FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2 RETURNING id",
+      text: 'DELETE FROM playlist_songs WHERE playlist_id = $1 AND song_id = $2 RETURNING id',
       values: [playlistId, songId],
     };
 
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new InvariantError("Lagu gagal dihapus dari playlist");
+      throw new InvariantError('Lagu gagal dihapus dari playlist');
     }
   }
 }

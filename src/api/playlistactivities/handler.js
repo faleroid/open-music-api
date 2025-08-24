@@ -17,7 +17,7 @@ class PlaylistActivitiesHandler {
     const result = await this._service.getActivities(playlistId);
 
     return {
-      status: "success",
+      status: 'success',
       data: result,
     };
   }

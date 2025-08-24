@@ -1,4 +1,4 @@
-const Joi = require("joi");
+const Joi = require('joi');
 
 const UserPayloadSchema = Joi.object({
   username: Joi.string().max(50).required(),

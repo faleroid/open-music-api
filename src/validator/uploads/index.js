@@ -1,5 +1,5 @@
-const InvariantError = require("../../exceptions/InvariantError");
-const { coverAlbumSchema } = require("./schema");
+const InvariantError = require('../../exceptions/InvariantError');
+const { coverAlbumSchema } = require('./schema');
 
 const UploadsValidator = {
   validateCoverAlbum: (headers) => {

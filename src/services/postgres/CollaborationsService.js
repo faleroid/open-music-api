@@ -1,7 +1,7 @@
-const { Pool } = require("pg");
-const { nanoid } = require("nanoid");
-const AuthorizationError = require("../../exceptions/AuthorizationError");
-const InvariantError = require("../../exceptions/InvariantError");
+const { Pool } = require('pg');
+const { nanoid } = require('nanoid');
+const AuthorizationError = require('../../exceptions/AuthorizationError');
+const InvariantError = require('../../exceptions/InvariantError');
 
 class CollaborationsService {
   constructor(usersService) {
@@ -14,7 +14,7 @@ class CollaborationsService {
 
     const id = `collab-${nanoid(16)}`;
     const query = {
-      text: "INSERT INTO collaborations VALUES($1, $2, $3) RETURNING id",
+      text: 'INSERT INTO collaborations VALUES($1, $2, $3) RETURNING id',
       values: [id, playlistId, userId],
     };
 
@@ -25,19 +25,19 @@ class CollaborationsService {
 
   async verifyCollaborator(playlistId, userId) {
     const query = {
-      text: "SELECT * FROM collaborations WHERE playlist_id = $1 AND user_id = $2",
+      text: 'SELECT * FROM collaborations WHERE playlist_id = $1 AND user_id = $2',
       values: [playlistId, userId],
     };
 
     const result = await this._pool.query(query);
     if (!result.rowCount) {
-      throw new AuthorizationError("Kolaborasi gagal diverifikasi");
+      throw new AuthorizationError('Kolaborasi gagal diverifikasi');
     }
   }
 
   async deleteCollaboration(playlistId, userId) {
     const query = {
-      text: "DELETE FROM collaborations WHERE playlist_id = $1 AND user_id = $2 RETURNING id",
+      text: 'DELETE FROM collaborations WHERE playlist_id = $1 AND user_id = $2 RETURNING id',
       values: [playlistId, userId],
     };
 
@@ -45,7 +45,7 @@ class CollaborationsService {
 
     if (!result.rowCount) {
       throw new InvariantError(
-        "Kolaborasi gagal dihapus. Kolaborasi tidak ditemukan",
+        'Kolaborasi gagal dihapus. Kolaborasi tidak ditemukan',
       );
     }
   }

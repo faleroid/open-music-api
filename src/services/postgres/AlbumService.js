@@ -1,7 +1,7 @@
-const { Pool } = require("pg");
-const { nanoid } = require("nanoid");
-const InvariantError = require("../../exceptions/InvariantError");
-const NotFoundError = require("../../exceptions/NotFoundError");
+const { Pool } = require('pg');
+const { nanoid } = require('nanoid');
+const InvariantError = require('../../exceptions/InvariantError');
+const NotFoundError = require('../../exceptions/NotFoundError');
 
 class AlbumsService {
   constructor() {
@@ -12,14 +12,14 @@ class AlbumsService {
     const id = `album-${nanoid(16)}`;
 
     const query = {
-      text: "INSERT INTO albums (id, name, year) VALUES ($1, $2, $3) RETURNING id",
+      text: 'INSERT INTO albums (id, name, year) VALUES ($1, $2, $3) RETURNING id',
       values: [id, name, year],
     };
 
     const result = await this._pool.query(query);
 
     if (!result.rows[0].id) {
-      throw new InvariantError("Album gagal ditambahkan");
+      throw new InvariantError('Album gagal ditambahkan');
     }
 
     return result.rows[0].id;
@@ -30,8 +30,8 @@ class AlbumsService {
 
     const id = `like-${nanoid(16)}`;
     const query = {
-    text: 'INSERT INTO user_album_likes (id, user_id, album_id) VALUES ($1, $2, $3) RETURNING id',
-    values: [id, userId, albumId],
+      text: 'INSERT INTO user_album_likes (id, user_id, album_id) VALUES ($1, $2, $3) RETURNING id',
+      values: [id, userId, albumId],
     };
 
     try {
@@ -40,7 +40,6 @@ class AlbumsService {
         throw new InvariantError('Gagal menyukai album');
       }
     } catch (error) {
-
       if (error.code === '23505') {
         throw new InvariantError('Anda sudah menyukai album ini', 400);
       }
@@ -48,7 +47,7 @@ class AlbumsService {
     }
   }
 
-   async deleteAlbumLike(albumId, userId) {
+  async deleteAlbumLike(albumId, userId) {
     const query = {
       text: 'DELETE FROM user_album_likes WHERE album_id = $1 AND user_id = $2 RETURNING id',
       values: [albumId, userId],
@@ -70,17 +69,17 @@ class AlbumsService {
 
   async getAlbumById(id) {
     const queryAlbum = {
-      text: "SELECT id, name, year, cover FROM albums WHERE id = $1",
+      text: 'SELECT id, name, year, cover FROM albums WHERE id = $1',
       values: [id],
     };
     const resultAlbum = await this._pool.query(queryAlbum);
 
     if (!resultAlbum.rowCount) {
-      throw new NotFoundError("Album tidak ditemukan");
+      throw new NotFoundError('Album tidak ditemukan');
     }
 
     const querySongs = {
-      text: "SELECT id, title, performer FROM songs WHERE album_id = $1",
+      text: 'SELECT id, title, performer FROM songs WHERE album_id = $1',
       values: [id],
     };
     const resultSongs = await this._pool.query(querySongs);
@@ -97,33 +96,33 @@ class AlbumsService {
 
   async editAlbumById(id, { name, year }) {
     const query = {
-      text: "UPDATE albums SET name = $1, year = $2 WHERE id = $3 RETURNING id",
+      text: 'UPDATE albums SET name = $1, year = $2 WHERE id = $3 RETURNING id',
       values: [name, year, id],
     };
 
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new NotFoundError("Gagal memperbarui album. Id tidak ditemukan");
+      throw new NotFoundError('Gagal memperbarui album. Id tidak ditemukan');
     }
   }
 
   async deleteAlbumById(id) {
     const query = {
-      text: "DELETE FROM albums WHERE id = $1 RETURNING id",
+      text: 'DELETE FROM albums WHERE id = $1 RETURNING id',
       values: [id],
     };
 
     const result = await this._pool.query(query);
 
     if (!result.rowCount) {
-      throw new NotFoundError("Album gagal dihapus. Id tidak ditemukan");
+      throw new NotFoundError('Album gagal dihapus. Id tidak ditemukan');
     }
   }
 
   async editAlbumCoverById(id, coverUrl) {
     const query = {
-      text: "UPDATE albums SET cover = $1 WHERE id = $2 RETURNING id",
+      text: 'UPDATE albums SET cover = $1 WHERE id = $2 RETURNING id',
       values: [coverUrl, id],
     };
 
@@ -131,7 +130,7 @@ class AlbumsService {
 
     if (!result.rowCount) {
       throw new NotFoundError(
-        "Gagal memperbarui sampul. Id album tidak ditemukan",
+        'Gagal memperbarui sampul. Id album tidak ditemukan',
       );
     }
   }

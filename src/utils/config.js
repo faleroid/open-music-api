@@ -1,10 +1,6 @@
-require("dotenv").config();
+require('dotenv').config();
 
 const config = {
-  app: {
-    host: process.env.PGHOST,
-    port: process.env.PGPORT,
-  },
   rabbitMq: {
     server: process.env.RABBITMQ_SERVER,
   },

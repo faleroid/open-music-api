@@ -1,10 +1,11 @@
 const autoBind = require('auto-bind');
 
 class UploadsHandler {
-  constructor(storageService, albumsService, validator) {
+  constructor(storageService, albumsService, validator, cacheService) {
     this._service = storageService;
     this._albumsService = albumsService;
     this._validator = validator;
+    this._cacheService = cacheService;
 
     autoBind(this);
   }
@@ -20,9 +21,11 @@ class UploadsHandler {
 
     await this._albumsService.editAlbumCoverById(albumId, coverUrl);
 
+    await this._cacheService.delete(`album:${albumId}`);
+
     const response = h.response({
-      status: "success",
-      message: "Sampul berhasil diunggah",
+      status: 'success',
+      message: 'Sampul berhasil diunggah',
     });
     response.code(201);
     return response;

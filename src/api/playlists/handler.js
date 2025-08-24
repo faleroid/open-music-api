@@ -18,7 +18,7 @@ class PlaylistsHandler {
 
     return h
       .response({
-        status: "success",
+        status: 'success',
         data: { playlistId },
       })
       .code(201);
@@ -30,7 +30,7 @@ class PlaylistsHandler {
     const playlists = await this._service.getPlaylists(owner);
 
     return {
-      status: "success",
+      status: 'success',
       data: { playlists },
     };
   }
@@ -43,8 +43,8 @@ class PlaylistsHandler {
     await this._service.deletePlaylistById(playlistId);
 
     return {
-      status: "success",
-      message: "Playlist berhasil dihapus",
+      status: 'success',
+      message: 'Playlist berhasil dihapus',
     };
   }
 }

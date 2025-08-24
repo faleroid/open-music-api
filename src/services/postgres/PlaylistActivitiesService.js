@@ -1,5 +1,5 @@
-const { Pool } = require("pg");
-const { nanoid } = require("nanoid");
+const { Pool } = require('pg');
+const { nanoid } = require('nanoid');
 
 class PlaylistActivitiesService {
   constructor() {

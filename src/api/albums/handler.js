@@ -1,4 +1,4 @@
-const autoBind = require("auto-bind");
+const autoBind = require('auto-bind');
 
 class AlbumsHandler {
   constructor(service, validator, cacheService) {
@@ -24,7 +24,7 @@ class AlbumsHandler {
     return response;
   }
 
-  async deleteAlbumLikeHandler(request, h) {
+  async deleteAlbumLikeHandler(request) {
     const { id: albumId } = request.params;
     const { id: userId } = request.auth.credentials;
 
@@ -43,7 +43,7 @@ class AlbumsHandler {
 
     try {
       const likes = await this._cacheService.get(cacheKey);
-      
+
       const response = h.response({
         status: 'success',
         data: {
@@ -55,9 +55,9 @@ class AlbumsHandler {
       return response;
     } catch (error) {
       const likes = await this._service.getAlbumLikesCount(albumId);
-      
+
       await this._cacheService.set(cacheKey, JSON.stringify(likes));
-      
+
       return {
         status: 'success',
         data: {
@@ -70,11 +70,11 @@ class AlbumsHandler {
   async postAlbumHandler(request, h) {
     this._validator.validateAlbumPayload(request.payload);
     const { name, year } = request.payload;
-    const albumId = await this._service.addAlbum({name, year });
+    const albumId = await this._service.addAlbum({ name, year });
 
     return h
       .response({
-        status: "success",
+        status: 'success',
         data: {
           albumId,
         },
@@ -84,15 +84,28 @@ class AlbumsHandler {
 
   async getAlbumByIdHandler(request) {
     const { id } = request.params;
+    const cacheKey = `album:${id}`;
 
-    const album = await this._service.getAlbumById(id);
+    try {
+      const cachedAlbums = await this._cacheService.get(cacheKey);
 
-    return {
-      status: "success",
-      data: {
-        album,
-      },
-    };
+      return {
+        status: 'success',
+        data: {
+          album: JSON.parse(cachedAlbums),
+        },
+      };
+    } catch (error) {
+      const album = await this._service.getAlbumById(id);
+      this._cacheService.set(cacheKey, JSON.stringify(album));
+
+      return {
+        status: 'success',
+        data: {
+          album,
+        },
+      };
+    }
   }
 
   async putAlbumByIdHandler(request) {
@@ -101,20 +114,23 @@ class AlbumsHandler {
     const { name, year } = request.payload;
 
     await this._service.editAlbumById(id, { name, year });
+    await this._cacheService.delete(`album:${id}`);
 
     return {
-      status: "success",
-      message: "Album berhasil diperbarui",
+      status: 'success',
+      message: 'Album berhasil diperbarui',
     };
   }
 
   async deleteAlbumByIdHandler(request) {
     const { id } = request.params;
+
     await this._service.deleteAlbumById(id);
+    await this._cacheService.delete(`album:${id}`);
 
     return {
-      status: "success",
-      message: "Album berhasil dihapus",
+      status: 'success',
+      message: 'Album berhasil dihapus',
     };
   }
 }
